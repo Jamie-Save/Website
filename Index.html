@@ -1,782 +1,210 @@
-<head>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- your page content -->
-    <script src="script.js"></script>
-  </body>
+<section class="sv-hero sv-hero--centered" aria-label="Stratavor hero">
+    <div class="sv-container">
+      <h1 class="sv-h1">Fully automated. All in one place.</h1>
+      <p class="sv-lede">Stratavor unifies ERP, CRM, and financial data into executive-grade insight — fast, clear, and built for decision-making.</p>
   
-
-<style>
-    /* =========================================================
-       Stratavor Premium Homepage v2.0 (HubSpot Elevate)
-       - Polished UI/UX + performance-minded SCOPED styles
-       - Shared gradient system for: Trusted By + WWD4 stage
-       ========================================================= */
-    
-    /* =========================================================
-       Brand tokens
-       ========================================================= */
-    :root{
-      --sv-ink:#0B1220;
-      --sv-ink-2:#2A3F48;
-      --sv-gunmetal:#395460;
-      --sv-gunmetal-2:#2A3F48;
-      --sv-blue:#2E7EA2;
-      --sv-blue-2:#4D92B1;
-      --sv-muted:#667085;
-    
-      --sv-border: rgba(15,23,42,.12);
-      --sv-border-soft: rgba(15,23,42,.08);
-    
-      --sv-radius-xl: 26px;
-      --sv-radius-lg: 22px;
-    
-      --sv-ease: cubic-bezier(.16,1,.3,1);
-    
-      /* Primary brand gradient (single source of truth) */
-      --sv-grad: linear-gradient(135deg, #2E7EA2 0%, #2D4D5B 55%, #1F333B 100%);
-      --sv-grad-filter: saturate(1.18) contrast(1.20);
-      --sv-grad-sheen:
-        radial-gradient(900px 520px at 20% 30%, rgba(255,255,255,.20), transparent 62%),
-        radial-gradient(900px 520px at 85% 75%, rgba(255,255,255,.16), transparent 66%);
-    
-      /* Accent strip */
-      --sv-accent-h: 3px;
-      --sv-accent-grad: linear-gradient(90deg, rgba(77,146,177,.95), rgba(57,84,96,.70), rgba(209,212,214,.75));
-    
-      /* Marquee */
-      --sv-marquee-gap: 72px;
-    
-      /* Buttons */
-      --sv-btn-h: 46px;
-      --sv-btn-pad-x: 20px;
-    }
-    
-    /* =========================================================
-       Elevate header: fixed + consistent translucency
-       (Fixes “white strip in the middle” by forcing inner wrappers transparent)
-       ========================================================= */
-    .hs-elevate-site-header{
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      width: 100% !important;
-      z-index: 99999 !important;
-    
-      background: rgba(255,255,255,.88) !important;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(15,23,42,.08);
-    }
-    
-    /* Inner wrappers sometimes have a solid fill that creates the “middle strip” */
-    .hs-elevate-site-header :is(
-      .hs-elevate-site-header__inner,
-      .hs-elevate-site-header__container,
-      .hs-elevate-site-header__content,
-      .hs-elevate-site-header__row,
-      .hs-elevate-site-header__nav,
-      .hs-elevate-site-header__navigation,
-      .hs-elevate-site-header__wrapper
-    ){
-      background: transparent !important;
-      background-color: transparent !important;
-      background-image: none !important;
-    }
-    
-    /* Respect users who reduce transparency */
-    @media (prefers-reduced-transparency: reduce){
-      .hs-elevate-site-header{
-        background: rgba(255,255,255,.98) !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-      }
-    }
-    
-    /* Optional: a dedicated wrapper for injected CTAs (see footer JS) */
-    header .sv-header-ctas{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    
-    /* =========================================================
-       Elevate header buttons — Login + Free Trial
-       (Targets by href to avoid hashed module classes)
-       ========================================================= */
-    header a.hs-elevate-button[href*="/_hcms/mem/login"],
-    header a.hs-elevate-button[href*="/_hcms/mem/login/"]{
-      background: linear-gradient(135deg, var(--sv-gunmetal) 0%, var(--sv-gunmetal-2) 100%) !important;
-      color: #fff !important;
-      border: 1px solid rgba(255,255,255,.10) !important;
-      border-radius: 999px !important;
-      box-shadow: 0 16px 40px rgba(57,84,96,.22) !important;
-      text-decoration: none !important;
-      font-weight: 700 !important;
-    }
-    
-    @media (hover:hover){
-      header a.hs-elevate-button[href*="/_hcms/mem/login"]:hover{
-        transform: translateY(-1px) !important;
-        box-shadow: 0 26px 60px rgba(57,84,96,.26) !important;
-        filter: saturate(1.03);
-      }
-    }
-    
-    /* Free Trial = “trial orange” */
-    header a.hs-elevate-button[href*="/pricing"]{
-      background: #FF7A59 !important;
-      color: #fff !important;
-      border: 1px solid rgba(0,0,0,.06) !important;
-      border-radius: 999px !important;
-      box-shadow: 0 12px 26px rgba(255, 122, 89, .35) !important;
-      text-decoration: none !important;
-      font-weight: 700 !important;
-    }
-    
-    @media (hover:hover){
-      header a.hs-elevate-button[href*="/pricing"]:hover{
-        transform: translateY(-1px) !important;
-        box-shadow: 0 18px 40px rgba(255, 122, 89, .45) !important;
-        filter: saturate(1.02);
-      }
-    }
-    
-    /* =========================================================
-       Shared layout helpers
-       ========================================================= */
-    .sv-container{max-width:1200px;margin:0 auto;padding:0 24px;}
-    .sv-section{padding:96px 0;}
-    .sv-spacer{height:20px;}
-    .sv-spacer--sm{height:16px;}
-    
-    @media (max-width:980px){
-      .sv-section{padding:76px 0;}
-      .sv-container{padding:0 18px;}
-    }
-    
-    /* Kicker text (replaces inline styles) */
-    .sv-kicker{
-      text-align:center;
-      font-size:12px;
-      letter-spacing:0.12em;
-      text-transform:uppercase;
-      color:var(--sv-muted);
-      margin:0 0 18px;
-    }
-    .sv-kicker--light{ color: rgba(255,255,255,.84); }
-    
-    /* =========================================================
-       SV Buttons (used in hero + WWD)
-       ========================================================= */
-    .sv-actions{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-    
-    .sv-actions a.sv-btn{
-      appearance:none;
-      -webkit-appearance:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      height: var(--sv-btn-h);
-      padding: 0 var(--sv-btn-pad-x);
-      border-radius: 999px;
-      font-family: "Titillium Web", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-weight: 650;
-      letter-spacing: -0.01em;
-      line-height: 1;
-      text-decoration:none !important;
-      cursor:pointer;
-      border: 1px solid var(--sv-border);
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
-    }
-    
-    .sv-actions a.sv-btn:hover{ transform: translateY(-2px); }
-    
-    .sv-actions a.sv-btn--primary{
-      background: var(--sv-grad);
-      color:#fff !important;
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 18px 54px rgba(31,51,59,.26);
-    }
-    .sv-actions a.sv-btn--primary:hover{
-      box-shadow: 0 26px 86px rgba(31,51,59,.32);
-    }
-    
-    .sv-actions a.sv-btn--secondary{
-      background: rgba(255,255,255,.86);
-      color: rgba(11,18,32,.86) !important;
-      border: 1px solid rgba(15,23,42,.14);
-      box-shadow: 0 10px 36px rgba(57,84,96,.10);
-    }
-    .sv-actions a.sv-btn--secondary:hover{
-      background: rgba(255,255,255,.95);
-      box-shadow: 0 16px 52px rgba(57,84,96,.14);
-    }
-    
-    .sv-actions a.sv-btn svg{ width:18px; height:18px; }
-    
-    /* =========================================================
-       HERO — swirl + carousel
-       ========================================================= */
-    .sv-hero--centered{
-      position:relative;
-      overflow:hidden;
-      isolation:isolate;
-      padding: clamp(34px, 4vw, 64px) 0 clamp(36px, 4.5vw, 72px);
-      background: linear-gradient(180deg, #ffffff 0%, #ffffff 62%, #f6fbff 100%);
-      --mx: 0px;
-      --my: 0px;
-    }
-    
-    .sv-hero--centered::before,
-    .sv-hero--centered::after{
-      content:"";
-      position:absolute;
-      inset:-58%;
-      pointer-events:none;
-    }
-    
-    @keyframes svSwirlFloat{
-      0%{ transform: translate3d(-52px,-34px,0) rotate(-22deg) scale(1.10); }
-      50%{ transform: translate3d(52px,34px,0) rotate(22deg) scale(1.14); }
-      100%{ transform: translate3d(-52px,-34px,0) rotate(-22deg) scale(1.10); }
-    }
-    @keyframes svSwirlSheen{
-      0%{ transform: translate3d(26px,-18px,0) rotate(10deg) scale(1.05); opacity:.55; }
-      50%{ transform: translate3d(-26px,22px,0) rotate(-12deg) scale(1.08); opacity:.78; }
-      100%{ transform: translate3d(26px,-18px,0) rotate(10deg) scale(1.05); opacity:.55; }
-    }
-    
-    .sv-hero--centered::before{
-      z-index:0;
-      background:
-        radial-gradient(1400px 980px at 14% 22%, rgba(46,126,162,.66), transparent 60%),
-        radial-gradient(1400px 1020px at 86% 16%, rgba(45,77,91,.70), transparent 62%),
-        radial-gradient(1600px 1200px at 56% 88%, rgba(31,51,59,.56), transparent 65%),
-        radial-gradient(1700px 1300px at 50% 52%, rgba(255,255,255,.34), transparent 72%);
-      mix-blend-mode: multiply;
-      filter: blur(18px) saturate(1.70) contrast(1.22);
-      animation: svSwirlFloat 7.8s ease-in-out infinite;
-      will-change: transform;
-      transform: translate3d(calc(var(--mx) * 3.6), calc(var(--my) * 3.6), 0);
-    }
-    .sv-hero--centered::after{
-      z-index:1;
-      background:
-        radial-gradient(900px 520px at 20% 30%, rgba(255,255,255,.26), transparent 62%),
-        radial-gradient(900px 520px at 85% 75%, rgba(255,255,255,.18), transparent 66%),
-        radial-gradient(1200px 700px at 56% 52%, rgba(46,126,162,.18), transparent 70%);
-      filter: blur(10px) saturate(1.15);
-      animation: svSwirlSheen 7.2s ease-in-out infinite;
-      will-change: transform;
-      transform: translate3d(calc(var(--mx) * 1.25), calc(var(--my) * 1.25), 0);
-    }
-    
-    @media (prefers-reduced-motion: reduce){
-      .sv-hero--centered::before,
-      .sv-hero--centered::after{ animation:none !important; transform:none !important; }
-    }
-    
-    .sv-hero--centered .sv-container{
-      position:relative;
-      z-index:3;
-      text-align:center;
-    }
-    
-    .sv-hero--centered .sv-h1{
-      margin: 0 0 10px;
-      font-size: clamp(42px, 4.2vw, 72px);
-      line-height: 1.03;
-      letter-spacing: -0.035em;
-      font-weight: 650;
-      color: var(--sv-gunmetal);
-    }
-    
-    .sv-hero--centered .sv-lede{
-      margin: 0 auto 18px;
-      max-width: 72ch;
-      font-size: 16px;
-      line-height: 1.65;
-      color: rgba(57,84,96,.82);
-    }
-    
-    .sv-hero--centered .sv-device{
-      position: relative;
-      margin: 22px auto 0;
-      width: min(1040px, 92vw);
-      background: transparent;
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-      overflow: visible;
-      transform-style: preserve-3d;
-      z-index: 3;
-    }
-    
-    /* Clicking the stage drives prev/next via JS */
-    .sv-hero--centered .sv-img-stage{
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: var(--sv-radius-xl);
-      overflow: hidden;
-      isolation: isolate;
-      background: #fff;
-      border: 1px solid rgba(15,23,42,.08);
-      box-shadow:
-        0 28px 95px rgba(57,84,96,.16),
-        0 8px 26px rgba(57,84,96,.10);
-      transform: translateZ(0);
-      cursor: pointer;
-      user-select: none;
-    }
-    
-    .sv-hero--centered .sv-img-slide{
-      position:absolute;
-      inset:0;
-      opacity:0;
-      transform: translateY(6px) scale(0.996);
-      transition: opacity 520ms ease, transform 820ms cubic-bezier(.16,1,.3,1);
-      will-change: opacity, transform;
-      --sv-img-scale: 1.12;
-      --sv-img-pos: 50% 44%;
-    }
-    .sv-hero--centered .sv-img-slide.is-active{
-      opacity:1;
-      transform: translateY(0) scale(1);
-      z-index:1;
-    }
-    .sv-hero--centered .sv-img-slide img{
-      width:100%;
-      height:100%;
-      display:block;
-      object-fit: cover !important;
-      object-position: var(--sv-img-pos);
-      transform: scale(var(--sv-img-scale));
-      transform-origin: center;
-      backface-visibility: hidden;
-    }
-    
-    /* Hover pill */
-    .sv-hero--centered .sv-img-slide::after{
-      content: attr(data-title) "\A" attr(data-desc);
-      white-space: pre-line;
-      position:absolute;
-      left: 18px;
-      bottom: 18px;
-      z-index: 4;
-      pointer-events:none;
-      max-width: min(520px, 78%);
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(11,18,32,.56);
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 14px 40px rgba(0,0,0,.18);
-      color: rgba(255,255,255,.96);
-      font-family: "Titillium Web", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-weight: 650;
-      letter-spacing: -0.01em;
-      line-height: 1.25;
-      font-size: 14.5px;
-      opacity:0;
-      transform: translateY(8px);
-      transition: opacity .18s ease, transform .18s ease;
-    }
-    .sv-hero--centered .sv-img-carousel:hover .sv-img-slide.is-active::after,
-    .sv-hero--centered .sv-img-carousel:focus-within .sv-img-slide.is-active::after{
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    /* Dots */
-    .sv-hero--centered .sv-img-dots{
-      position:absolute;
-      left:50%;
-      bottom: 16px;
-      transform: translateX(-50%) translateY(6px);
-      display:flex;
-      gap:8px;
-      padding: 9px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.14);
-      border: 1px solid rgba(255,255,255,.16);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 6;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .18s ease, transform .18s ease;
-    }
-    .sv-hero--centered .sv-img-carousel:hover .sv-img-dots,
-    .sv-hero--centered .sv-img-carousel:focus-within .sv-img-dots{
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-    .sv-hero--centered .sv-img-dot{
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      border: 0;
-      background: rgba(255,255,255,.42);
-      cursor: pointer;
-      transition: width 220ms ease, background 220ms ease, transform 220ms ease;
-    }
-    .sv-hero--centered .sv-img-dot:hover{ transform: scale(1.12); }
-    .sv-hero--centered .sv-img-dot.is-active{ width: 18px; background: rgba(255,255,255,.90); }
-    
-    .sv-hero--centered .sv-actions{ margin-top: 18px; position:relative; z-index:6; }
-    .sv-hero--centered .sv-fineprint{
-      margin-top: 12px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: rgba(57,84,96,.78);
-    }
-    
-    @media (max-width: 520px){
-      .sv-hero--centered .sv-img-stage{ aspect-ratio: 4 / 3; }
-      .sv-actions{ flex-direction: column; align-items: stretch; }
-      .sv-actions a.sv-btn{ width: 100%; }
-      .sv-hero--centered .sv-img-slide::after{
-        left: 14px;
-        bottom: 14px;
-        max-width: 86%;
-      }
-    }
-    
-    /* =========================================================
-       MARQUEES — seamless loop
-       - Trusted By: dark gradient
-       - Integrations: solid white
-       ========================================================= */
-    .sv-marquee-section{
-      padding: 30px 0;
-      background: #fff;
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .sv-marquee-section--dark{
-      padding: 26px 0;
-      position: relative;
-      overflow: hidden;
-      color:#fff;
-    }
-    
-    /* Gradient layer (shared palette with WWD4 stage) */
-    .sv-marquee-section--dark::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: var(--sv-grad);
-      filter: var(--sv-grad-filter);
-      pointer-events:none;
-      z-index:0;
-    }
-    .sv-marquee-section--dark::after{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: var(--sv-grad-sheen);
-      opacity:.65;
-      pointer-events:none;
-      z-index:1;
-    }
-    .sv-marquee-section--dark .sv-container,
-    .sv-marquee-section--dark .sv-marquee-shell{
-      position:relative;
-      z-index:2;
-    }
-    
-    /* Shell keeps the infinite loop clean + provides soft faded edges */
-    .sv-marquee-shell{
-      position: relative;
-      max-width: 100%;
-      margin: 0 auto;
-    
-      /* Edge-fade (premium “infinite loop” feel) */
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%);
-              mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%);
-    }
-    
-    .sv-marquee-track{
-      display:flex;
-      width:max-content;
-      will-change: transform;
-      transform: translate3d(0,0,0);
-      animation: svMarquee var(--sv-marquee-duration, 28s) linear infinite;
-      gap: var(--sv-marquee-gap, 72px);
-    }
-    .sv-marquee-track--reverse{ animation-direction: reverse; }
-    .sv-marquee-track:hover{ animation-play-state: paused; }
-    
-    .sv-marquee-seq{
-      display:flex;
-      align-items:center;
-      gap: var(--sv-marquee-gap, 72px);
-    }
-    
-    /* Logo images */
-    .sv-partner-logo{
-      height: 32px;
-      width: auto;
-      max-height: 44px;
-      display:block;
-      object-fit: contain;
-      margin: 0;
-      opacity: .92;
-      transition: filter .25s ease, opacity .25s ease;
-    }
-    
-    .sv-marquee-section--dark .sv-partner-logo{
-      filter: brightness(0) invert(1) opacity(.90) !important;
-    }
-    .sv-marquee-section--dark .sv-partner-logo:hover{
-      filter: brightness(0) invert(1) opacity(1) !important;
-      opacity: 1;
-    }
-    
-    /* Text “logo” placeholders (Trusted By) */
-    .sv-wordmark{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      height: 36px;
-      padding: 0 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
-      color: rgba(255,255,255,.92);
-      font-family: "Titillium Web", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-weight: 650;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-    }
-    .sv-wordmark:hover{ background: rgba(255,255,255,.12); }
-    
-    @keyframes svMarquee{
-      0%{ transform: translate3d(0,0,0); }
-      100%{ transform: translate3d(calc(-1 * var(--sv-marquee-shift, 800px)),0,0); }
-    }
-    
-    @media (max-width: 768px){
-      .sv-partner-logo{ height: 24px; }
-      .sv-wordmark{ height: 34px; padding: 0 14px; }
-    }
-    
-    @media (prefers-reduced-motion: reduce){
-      .sv-marquee-track{ animation: none !important; transform:none !important; }
-    }
-    
-    /* =========================================================
-       WWD4 — gradient stage behind image/cards (must match Trusted By)
-       ========================================================= */
-    .sv-wwd4, .sv-wwd4 *{ box-sizing:border-box; }
-    
-    .sv-wwd4{
-      position:relative;
-      padding: clamp(56px, 6vw, 92px) 0;
-      background:#fff;
-      overflow:hidden;
-      isolation:isolate;
-      font-family: "Titillium Web", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      border-top: 1px solid rgba(15,23,42,.06);
-      border-bottom: 1px solid rgba(15,23,42,.06);
-    }
-    
-    /* Gradient stage */
-    .sv-wwd4::before,
-    .sv-wwd4::after{
-      content:"";
-      position:absolute;
-      left: 50%;
-      top: clamp(30px, 5vw, 58px);
-      transform: translateX(-2%);
-      width: min(1040px, 94vw);
-      height: clamp(320px, 36vw, 440px);
-      border-radius: 30px;
-    
-      pointer-events:none;
-      z-index:0;
-    
-      -webkit-mask-image: radial-gradient(120% 90% at 50% 45%, #000 56%, transparent 100%);
-              mask-image: radial-gradient(120% 90% at 50% 45%, #000 56%, transparent 100%);
-    }
-    
-    .sv-wwd4::before{
-      background: var(--sv-grad);
-      filter: var(--sv-grad-filter);
-      border: 1px solid rgba(255,255,255,.22);
-      box-shadow: 0 44px 140px rgba(31,51,59,.28);
-    }
-    
-    .sv-wwd4::after{
-      z-index:1;
-      background: var(--sv-grad-sheen);
-      opacity: .65;
-    }
-    
-    .sv-wwd4__container{ position:relative; z-index:2; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .sv-wwd4__grid{ display:grid; grid-template-columns: 1.05fr .95fr; gap: clamp(22px, 3vw, 46px); align-items:center; }
-    .sv-wwd4__title{ margin: 0 0 10px; font-size: clamp(36px, 3.6vw, 54px); line-height: 1.06; letter-spacing: -0.035em; font-weight: 650; color: rgba(42,63,72,.98); }
-    .sv-wwd4__lede{ margin: 0 0 18px; max-width: 72ch; font-size: 16.5px; line-height: 1.72; color: rgba(57,84,96,.78); }
-    
-    .sv-wwd4__features{ display:grid; gap: 12px; margin: 18px 0 0; padding:0; list-style:none; }
-    .sv-wwd4__feature{
-      position:relative;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background:#fff;
-      border: 1px solid rgba(15,23,42,.16);
-      box-shadow: 0 1px 0 rgba(15,23,42,.04), 0 16px 44px rgba(57,84,96,.08);
-      overflow:hidden;
-    }
-    .sv-wwd4__feature::before{ content:""; position:absolute; left:-1px; top:-1px; bottom:-1px; width: 4px; background: var(--sv-accent-grad); opacity:.92; }
-    .sv-wwd4__feature strong{ display:block; font-weight: 650; color: rgba(42,63,72,.96); letter-spacing: -0.01em; }
-    .sv-wwd4__feature span{ display:block; margin-top: 4px; color: rgba(57,84,96,.74); line-height: 1.55; }
-    
-    .sv-wwd4__actions{ margin-top: 18px; justify-content:flex-start; }
-    .sv-wwd4__fineprint{ margin-top: 12px; font-size: 14px; line-height: 1.6; color: rgba(57,84,96,.72); }
-    
-    .sv-wwd4__visual{ justify-self:end; width: min(720px, 100%); }
-    .sv-wwd4__device{
-      border-radius: 22px;
-      overflow:hidden;
-      background:#fff;
-      border: 1px solid rgba(15,23,42,.16);
-      box-shadow: 0 1px 0 rgba(15,23,42,.06), 0 28px 88px rgba(57,84,96,.14);
-    }
-    .sv-wwd4__device::before{ content:""; display:block; height: 3px; background: var(--sv-accent-grad); opacity:.92; }
-    .sv-wwd4__img{ width:100%; height:auto; display:block; }
-    
-    @media (max-width: 980px){
-      .sv-wwd4::before,
-      .sv-wwd4::after{
-        left: 50%;
-        transform: translateX(-50%);
-        width: min(980px, 94vw);
-        height: clamp(240px, 44vw, 340px);
-        top: 18px;
-      }
-      .sv-wwd4__grid{ grid-template-columns: 1fr; }
-      .sv-wwd4__visual{ justify-self: stretch; width: 100%; }
-    }
-    
-    /* =========================================================
-       TRUST SECTION (kept lean + premium)
-       ========================================================= */
-    .sv-trust{ background:#fff; }
-    #trust .sv-h2{
-      font-size:clamp(30px,3.2vw,44px);
-      line-height:1.08;
-      letter-spacing:-.02em;
-      margin:0 0 14px;
-      font-weight:700;
-      color: var(--sv-ink-2);
-    }
-    #trust .sv-subhead{
-      font-size:18px;
-      line-height:1.6;
-      color:var(--sv-muted);
-      max-width:70ch;
-      margin:0;
-    }
-    
-    .sv-trust-grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:16px;
-    }
-    
-    .sv-trust-card{
-      position:relative;
-      border-radius:20px;
-      padding:20px;
-      background:#fff;
-      border:1px solid rgba(15,23,42,.08);
-      box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.04);
-      overflow:hidden;
-      transition:transform .35s var(--sv-ease), box-shadow .35s var(--sv-ease), border-color .35s;
-    }
-    .sv-trust-card:hover{
-      transform:translateY(-4px);
-      border-color:rgba(15,23,42,.12);
-      box-shadow:0 24px 64px rgba(15,23,42,.12);
-    }
-    
-    /* Badge icon pulse (JS toggles .is-active) */
-    #trust .sv-trust-badge{
-      background:none !important;
-      border:none !important;
-      box-shadow:none !important;
-      border-radius:0 !important;
-      width:auto !important;
-      height:auto !important;
-      padding:0 !important;
-      margin-bottom:10px;
-      position:relative;
-      overflow:visible;
-    }
-    #trust .sv-trust-ico{
-      width:64px;
-      height:64px;
-      display:block;
-      opacity:.55;
-      transition:opacity .35s ease, transform .35s ease, filter .35s ease;
-    }
-    #trust .sv-trust-badge.is-active .sv-trust-ico{
-      opacity:1;
-      transform:translateY(-4px);
-      filter: drop-shadow(0 10px 22px rgba(57,84,96,.30)) drop-shadow(0 0 18px rgba(77,146,177,.35));
-      animation:svBadgeFloat 4.8s var(--sv-ease) infinite;
-    }
-    #trust .sv-trust-card:hover .sv-trust-ico{ opacity:.9; }
-    
-    .sv-trust-title{
-      font-weight:600;
-      letter-spacing:-.01em;
-      margin:2px 0 8px;
-      color:rgba(11,18,32,.92);
-    }
-    .sv-trust-text{
-      margin:0;
-      color:var(--sv-muted);
-      line-height:1.6;
-      font-weight:400;
-    }
-    @keyframes svBadgeFloat{
-      0%,100%{transform:translateY(0);}
-      50%{transform:translateY(-2px);}
-    }
-    @media (max-width:980px){
-      .sv-trust-grid{ grid-template-columns:1fr; }
-    }
-    
-    /* =========================================================
-       Ripple (used by footer JS)
-       ========================================================= */
-    .sv-ripple-target{ position: relative; overflow: hidden; }
-    .sv-ripple{
-      position:absolute;
-      border-radius:999px;
-      transform: scale(0);
-      opacity:.22;
-      background: #ffffff;
-      animation: svRipple 700ms ease-out;
-      pointer-events:none;
-    }
-    @keyframes svRipple{ to{ transform: scale(1); opacity:0; } }
-    
-    </style>
-    
+      <div class="sv-device">
+        <div class="sv-img-carousel" data-sv-hero-carousel data-interval="3500">
+          <div class="sv-img-stage" aria-label="Product gallery">
+            <figure class="sv-img-slide is-active" data-title="Financial Snapshot" data-desc="Leadership-ready view of position and performance.">
+              <img src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Financial_Snpshot_Carousel%5B1%5D.png" alt="Financial Snapshot" loading="eager" decoding="async">
+            </figure>
+  
+            <figure class="sv-img-slide" data-title="Numbers That Matter" data-desc="The key indicators of financial health, surfaced without noise.">
+              <img src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Numbers_That_Matter%5B1%5D.png" alt="Numbers That Matter" loading="lazy" decoding="async">
+            </figure>
+  
+            <figure class="sv-img-slide" data-title="Insights &amp; Commentary" data-desc="Trends and variances — what they mean, and what to do next.">
+              <img src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Insights_&amp;_Commentary%5B1%5D.png" alt="Insights and Commentary" loading="lazy" decoding="async">
+            </figure>
+  
+            <figure class="sv-img-slide" data-title="Customer Retention" data-desc="LTV, CAC, and retention health — protect growth with clarity.">
+              <img src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Customer%20Retention%20-%20LTV%2c%20CAC.png" alt="Customer Retention" loading="lazy" decoding="async">
+            </figure>
+  
+            <figure class="sv-img-slide" data-title="Macro Trends" data-desc="Commentary on the forces shaping next month’s decisions.">
+              <img src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Macro%20Trends%20Image.png" alt="Macro Trends" loading="lazy" decoding="async">
+            </figure>
+  
+            <figure class="sv-img-slide" data-title="Churn Analysis" data-desc="Early risk signals and drivers — so you can intervene sooner.">
+              <img src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Customer%20Retention%20-%20Churn.png" alt="Churn Analysis" loading="lazy" decoding="async">
+            </figure>
+          </div>
+  
+          <!-- JS will populate dots here -->
+          <div class="sv-img-dots" aria-label="Carousel navigation"></div>
+        </div>
+      </div>
+  
+      <div class="sv-actions">
+        <a class="sv-btn sv-btn--primary" href="/pricing">
+          See pricing
+          <svg class="sv-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+  
+        <a class="sv-btn sv-btn--secondary" href="/Power-BI">View a live sample</a>
+      </div>
+  
+      <p class="sv-fineprint">No setup. No spreadsheets. Just clarity. • Automated integrations • Concierge-reviewed reports</p>
+    </div>
+  </section>
+  
+  <!-- TRUSTED BY (Dark gradient) -->
+  <section class="sv-marquee-section sv-marquee-section--dark sv-trustedby" aria-label="Trusted by">
+    <div class="sv-container">
+      <p class="sv-kicker sv-kicker--light"><strong>Trusted by</strong></p>
+    </div>
+  
+    <div class="sv-marquee-shell">
+      <div class="sv-marquee-track sv-marquee-track--reverse" data-sv-marquee data-speed="88">
+        <div class="sv-marquee-seq">
+          <!-- Replace these placeholders with real customer logos when available -->
+          <span class="sv-wordmark">Client 1</span>
+          <span class="sv-wordmark">Client 2</span>
+          <span class="sv-wordmark">Client 3</span>
+          <span class="sv-wordmark">Client 4</span>
+          <span class="sv-wordmark">Client 5</span>
+          <span class="sv-wordmark">Client 6</span>
+          <span class="sv-wordmark">Client 7</span>
+          <span class="sv-wordmark">Client 8</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- WHAT WE DO -->
+  <section class="sv-wwd4" id="what-we-do">
+    <div class="sv-wwd4__container">
+      <div class="sv-wwd4__grid">
+        <!-- LEFT -->
+        <div class="sv-wwd4__copy">
+          <h2 class="sv-wwd4__title">Turn financial data into board-ready clarity.</h2>
+          <p class="sv-wwd4__lede">Stratavor connects your systems, standardizes your KPIs, and generates the narrative executives actually need — so leadership can move from reporting performance to steering it.</p>
+  
+          <ul class="sv-wwd4__features" role="list">
+            <li class="sv-wwd4__feature"><strong>Narrative Intelligence</strong> <span>Cause → implication → decision commentary that stands up in the boardroom.</span></li>
+            <li class="sv-wwd4__feature"><strong>Executive KPI system</strong> <span>Consistent definitions, targets, and variance logic across teams and entities.</span></li>
+            <li class="sv-wwd4__feature"><strong>Automated reporting packs</strong> <span>Recurring PDFs and web packs with charts, tables, and decision prompts — delivered on schedule.</span></li>
+          </ul>
+  
+          <div class="sv-actions sv-wwd4__actions">
+            <a class="sv-btn sv-btn--primary" href="#contact">
+              Book a demo
+              <svg class="sv-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M13 5l7 7-7 7M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </a>
+  
+            <a class="sv-btn sv-btn--secondary" href="#sv-chessboard">
+              See how it works
+              <svg class="sv-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M13 5l7 7-7 7M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </a>
+          </div>
+  
+          <p class="sv-wwd4__fineprint">Built for CFOs, COOs, and leadership teams who want decision-grade reporting — without the monthly scramble.</p>
+        </div>
+  
+        <!-- RIGHT -->
+        <div class="sv-wwd4__visual">
+          <div class="sv-wwd4__device" aria-label="Stratavor platform preview">
+            <img class="sv-wwd4__img" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Group%202085665120.png" alt="Stratavor reporting and KPI dashboard preview" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- INTEGRATIONS (Solid white) -->
+  <section class="sv-marquee-section sv-integrations" aria-label="Integrate your existing systems">
+    <div class="sv-container">
+      <p class="sv-kicker"><strong>Integrate your existing systems</strong></p>
+    </div>
+  
+    <div class="sv-marquee-shell">
+      <div class="sv-marquee-track" data-sv-marquee data-speed="94">
+        <div class="sv-marquee-seq">
+          <img class="sv-partner-logo" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/20240123223815!Intuit_QuickBooks_logo%20(1).svg" alt="QuickBooks">
+          <img class="sv-partner-logo" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/xero_qtv8.1920.webp" alt="Xero">
+          <img class="sv-partner-logo" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Microsoft-logo.webp" alt="Microsoft">
+          <img class="sv-partner-logo" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/HubSpot_Logo.svg.png" alt="HubSpot">
+          <img class="sv-partner-logo" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Stripe_Logo%2c_revised_2016.svg.png" alt="Stripe">
+          <img class="sv-partner-logo" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Oracle_NetSuite_2024_Logo.jpg" alt="NetSuite">
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- TRUST / SECURITY -->
+  <section class="sv-section sv-trust" id="trust">
+    <div class="sv-container">
+      <div class="sv-reveal">
+        <h2 class="sv-h2">Trust that stands up in a boardroom.</h2>
+        <p class="sv-subhead">Security, governance, and auditability are built in, not bolted on. Every insight can be traced back to source.</p>
+      </div>
+  
+      <div class="sv-spacer" aria-hidden="true"></div>
+  
+      <div class="sv-trust-grid sv-reveal">
+        <div class="sv-trust-card">
+          <div class="sv-trust-badge" data-badge="1" aria-hidden="true">
+            <img class="sv-trust-ico" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/SOC%20II.svg" alt="">
+          </div>
+          <div class="sv-trust-title">SOC 2 readiness</div>
+          <p class="sv-trust-text">Controls and auditability designed in from day one, with enterprise-grade evidence trails.</p>
+        </div>
+  
+        <div class="sv-trust-card">
+          <div class="sv-trust-badge" data-badge="2" aria-hidden="true">
+            <img class="sv-trust-ico" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/ISO%2027001.svg" alt="">
+          </div>
+          <div class="sv-trust-title">Information security (ISO 27001)</div>
+          <p class="sv-trust-text">A security management approach that scales with customers, users, and data sensitivity.</p>
+        </div>
+  
+        <div class="sv-trust-card">
+          <div class="sv-trust-badge" data-badge="3" aria-hidden="true">
+            <img class="sv-trust-ico" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/GDPR.svg" alt="">
+          </div>
+          <div class="sv-trust-title">GDPR-aligned handling</div>
+          <p class="sv-trust-text">Clear purpose, retention, and governance patterns for defensible EU-grade compliance.</p>
+        </div>
+  
+        <div class="sv-trust-card">
+          <div class="sv-trust-badge" data-badge="4" aria-hidden="true">
+            <img class="sv-trust-ico" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Encryption.svg" alt="">
+          </div>
+          <div class="sv-trust-title">Encryption in transit + at rest</div>
+          <p class="sv-trust-text">Secure transport and storage patterns so sensitive reporting stays protected end-to-end.</p>
+        </div>
+  
+        <div class="sv-trust-card">
+          <div class="sv-trust-badge" data-badge="5" aria-hidden="true">
+            <img class="sv-trust-ico" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/RBA.svg" alt="">
+          </div>
+          <div class="sv-trust-title">Role-based access + audit logs</div>
+          <p class="sv-trust-text">Permissions that match real org structure, with clear accountability and change history.</p>
+        </div>
+  
+        <div class="sv-trust-card">
+          <div class="sv-trust-badge" data-badge="6" aria-hidden="true">
+            <img class="sv-trust-ico" loading="lazy" decoding="async" src="https://49216937.fs1.hubspotusercontent-eu1.net/hubfs/49216937/Traceability.svg" alt="">
+          </div>
+          <div class="sv-trust-title">Show-your-work traceability</div>
+          <p class="sv-trust-text">Every KPI and narrative can be tied back to source fields and period logic.</p>
+        </div>
+      </div>
+  
+      <div class="sv-spacer sv-spacer--sm" aria-hidden="true"></div>
+  
+      <div class="sv-actions sv-reveal">
+        <a class="sv-btn sv-btn--primary" href="/pricing">See pricing</a>
+        <a class="sv-btn sv-btn--secondary" href="#contact">Talk to us</a>
+      </div>
+    </div>
+  </section>
+  
