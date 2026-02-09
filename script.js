@@ -1,398 +1,454 @@
 (() => {
   'use strict';
 
-  const prefersReduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // =========================================================
+  // Configuration
+  // =========================================================
 
-  /* ---------------------------------------------------------
-     Small utilities
-     --------------------------------------------------------- */
+  const prefersReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ANIMATION_DELAY = 100;
+  const CAROUSEL_INTERVAL = 5000;
+
+  // =========================================================
+  // Utilities
+  // =========================================================
+
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  const lerp = (start, end, factor) => start + (end - start) * factor;
 
-  const debounce = (fn, wait = 120) => {
-    let t = null;
+  const debounce = (fn, wait = 100) => {
+    let timeout;
     return (...args) => {
-      if (t) clearTimeout(t);
-      t = setTimeout(() => fn(...args), wait);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), wait);
     };
   };
 
-  /* ---------------------------------------------------------
-     HERO CAROUSEL
-     - Dots auto-built
-     - Click left third = previous
-       Click middle/right = next
-     --------------------------------------------------------- */
-  function initSvHeroCarousel(root) {
-    if (!root || root.dataset.svHeroInit === '1') return;
-    root.dataset.svHeroInit = '1';
+  const throttle = (fn, limit = 16) => {
+    let inThrottle;
+    return (...args) => {
+      if (!inThrottle) {
+        fn(...args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  };
 
-    const slides = Array.from(root.querySelectorAll('.sv-img-slide'));
-    const dotsWrap = root.querySelector('.sv-img-dots');
-    const stage = root.querySelector('.sv-img-stage');
-    if (!slides.length || !dotsWrap || !stage) return;
+  // =========================================================
+  // Scroll Animations
+  // =========================================================
 
-    dotsWrap.innerHTML = '';
-    slides.forEach((_, i) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'sv-img-dot' + (i === 0 ? ' is-active' : '');
-      b.setAttribute('aria-label', 'Slide ' + (i + 1));
-      b.dataset.index = String(i);
-      dotsWrap.appendChild(b);
+  function initScrollAnimations() {
+    const animatedElements = document.querySelectorAll('[data-animate]');
+    if (!animatedElements.length) return;
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          const element = entry.target;
+          const delay = parseInt(element.dataset.delay || 0, 10);
+          
+          setTimeout(() => {
+            element.classList.add('animated');
+          }, delay);
+          
+          observer.unobserve(element);
+        }
+      });
+    }, observerOptions);
+
+    animatedElements.forEach(el => observer.observe(el));
+  }
+
+  // =========================================================
+  // Navigation Scroll Effect
+  // =========================================================
+
+  function initNavScroll() {
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+
+    let lastScroll = 0;
+    let ticking = false;
+
+    const updateNav = () => {
+      const scrollY = window.scrollY;
+      
+      if (scrollY > 100) {
+        nav.style.background = 'rgba(255, 255, 255, 0.95)';
+        nav.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+      } else {
+        nav.style.background = 'rgba(255, 255, 255, 0.8)';
+        nav.style.boxShadow = 'none';
+      }
+
+      lastScroll = scrollY;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateNav);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateNav();
+  }
+
+  // =========================================================
+  // Carousel
+  // =========================================================
+
+  function initCarousel() {
+    const carousel = document.querySelector('[data-carousel]');
+    if (!carousel) return;
+
+    const slides = Array.from(carousel.querySelectorAll('.carousel-slide'));
+    const dotsContainer = carousel.querySelector('.carousel-dots');
+    const stage = carousel.querySelector('.carousel-stage');
+    
+    if (!slides.length || !dotsContainer || !stage) return;
+
+    let currentIndex = 0;
+    let autoplayTimer = null;
+    let isPaused = false;
+
+    // Create dots
+    slides.forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+      dot.addEventListener('click', () => goToSlide(index));
+      dotsContainer.appendChild(dot);
     });
 
-    const dots = Array.from(dotsWrap.querySelectorAll('.sv-img-dot'));
-    let idx = 0;
-    let timer = null;
-    const interval = parseInt(root.getAttribute('data-interval') || '6500', 10);
+    const dots = Array.from(dotsContainer.querySelectorAll('.carousel-dot'));
 
-    const goTo = (next) => {
-      const total = slides.length;
-      const n = (next + total) % total;
+    function goToSlide(index) {
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
 
-      slides[idx].classList.remove('is-active');
-      dots[idx].classList.remove('is-active');
+      slides[currentIndex].classList.remove('active');
+      dots[currentIndex].classList.remove('active');
 
-      slides[n].classList.add('is-active');
-      dots[n].classList.add('is-active');
+      currentIndex = index;
 
-      idx = n;
-    };
+      slides[currentIndex].classList.add('active');
+      dots[currentIndex].classList.add('active');
 
-    const stop = () => {
-      if (timer) clearInterval(timer);
-      timer = null;
-    };
+      resetAutoplay();
+    }
 
-    const start = () => {
-      if (prefersReduce) return;
-      stop();
-      timer = setInterval(() => goTo(idx + 1), interval);
-    };
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
 
-    dotsWrap.addEventListener('click', (e) => {
-      const btn = e.target.closest('.sv-img-dot');
-      if (!btn) return;
-      const n = parseInt(btn.dataset.index, 10);
-      if (!Number.isFinite(n)) return;
-      goTo(n);
-      start();
-    });
+    function startAutoplay() {
+      if (prefersReduceMotion || isPaused) return;
+      autoplayTimer = setInterval(nextSlide, CAROUSEL_INTERVAL);
+    }
 
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function resetAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    // Click navigation
     stage.addEventListener('click', (e) => {
-      // Don’t hijack real interactive elements layered over the carousel.
-      if (e.target.closest('button, a')) return;
-
       const rect = stage.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const third = rect.width / 3;
 
-      if (x < third) goTo(idx - 1);
-      else goTo(idx + 1);
-
-      start();
+      if (x < third) {
+        goToSlide(currentIndex - 1);
+      } else {
+        goToSlide(currentIndex + 1);
+      }
     });
 
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', start);
-    root.addEventListener('focusin', stop);
-    root.addEventListener('focusout', start);
+    // Pause on hover
+    carousel.addEventListener('mouseenter', () => {
+      isPaused = true;
+      stopAutoplay();
+    });
 
+    carousel.addEventListener('mouseleave', () => {
+      isPaused = false;
+      startAutoplay();
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
+      if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+    });
+
+    // Start autoplay
+    startAutoplay();
+
+    // Pause when tab is hidden
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) stop();
-      else start();
-    });
-
-    slides.forEach((s, i) => s.classList.toggle('is-active', i === 0));
-    start();
-  }
-
-  /* ---------------------------------------------------------
-     HERO PARALLAX (device drift + background vars)
-     --------------------------------------------------------- */
-  function initHeroParallax() {
-    if (prefersReduce) return;
-
-    const hero = document.querySelector('.sv-hero--centered');
-    const device = hero && hero.querySelector('.sv-device');
-    if (!hero || !device) return;
-    if (hero.dataset.svParallaxInit === '1') return;
-    hero.dataset.svParallaxInit = '1';
-
-    let raf = null;
-    let targetX = 0, targetY = 0;
-    let curX = 0, curY = 0;
-    let scrollT = 0, scrollCur = 0;
-
-    let inView = true;
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        inView = !!(entries[0] && entries[0].isIntersecting);
-        if (inView) requestTick();
-      }, { threshold: 0.08 });
-      io.observe(hero);
-    }
-
-    function requestTick() {
-      if (!raf) raf = requestAnimationFrame(tick);
-    }
-
-    function onMove(e) {
-      const r = hero.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width;
-      const y = (e.clientY - r.top) / r.height;
-      targetX = x - 0.5;
-      targetY = y - 0.5;
-      requestTick();
-    }
-
-    function onLeave() {
-      targetX = 0;
-      targetY = 0;
-      requestTick();
-    }
-
-    function onScroll() {
-      const r = hero.getBoundingClientRect();
-      const mid = r.top + r.height / 2;
-      const vh = window.innerHeight || 800;
-      const p = (mid - vh / 2) / (vh / 2);
-      scrollT = clamp(p, -1, 1) * -10;
-      requestTick();
-    }
-
-    function tick() {
-      raf = null;
-      if (!inView) return;
-
-      curX += (targetX - curX) * 0.08;
-      curY += (targetY - curY) * 0.08;
-      scrollCur += (scrollT - scrollCur) * 0.10;
-
-      const tx = (curX * 10);
-      const ty = (curY * 8) + scrollCur;
-      const rx = (-curY * 2.0);
-      const ry = (curX * 2.8);
-
-      device.style.transform = `translate3d(${tx}px, ${ty}px, 0) rotateX(${rx}deg) rotateY(${ry}deg)`;
-
-      // Drives swirl background via CSS vars
-      hero.style.setProperty('--mx', (curX * 18).toFixed(2) + 'px');
-      hero.style.setProperty('--my', (curY * 14).toFixed(2) + 'px');
-    }
-
-    hero.addEventListener('pointermove', onMove, { passive: true });
-    hero.addEventListener('pointerleave', onLeave, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    onScroll();
-  }
-
-  /* ---------------------------------------------------------
-     RIPPLE (nice micro-interaction)
-     --------------------------------------------------------- */
-  function addRipple(e) {
-    const el = e.currentTarget;
-    const rect = el.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 1.2;
-
-    const ripple = document.createElement('span');
-    ripple.className = 'sv-ripple';
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-    ripple.style.top  = (e.clientY - rect.top  - size / 2) + 'px';
-
-    el.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 700);
-  }
-
-  function initRippleSelectors() {
-    const targets = document.querySelectorAll('.sv-actions a.sv-btn');
-    targets.forEach((el) => {
-      if (el.dataset.svRipple === '1') return;
-      el.dataset.svRipple = '1';
-      el.classList.add('sv-ripple-target');
-      el.addEventListener('pointerdown', addRipple, { passive: true });
+      if (document.hidden) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
     });
   }
 
-  /* ---------------------------------------------------------
-     MARQUEE — seamless loop (NO gaps)
-     - Clones the sequence enough times to cover viewport
-     - Shift distance includes flex gap between sequences
-     --------------------------------------------------------- */
-  function initMarquees() {
-    const tracks = document.querySelectorAll('.sv-marquee-track[data-sv-marquee]');
-    tracks.forEach((track) => {
-      if (track.dataset.svMarqueeInit === '1') return;
-      track.dataset.svMarqueeInit = '1';
+  // =========================================================
+  // Marquee
+  // =========================================================
 
-      let seq = track.querySelector('.sv-marquee-seq');
-      if (!seq) {
-        seq = document.createElement('div');
-        seq.className = 'sv-marquee-seq';
-        while (track.firstChild) seq.appendChild(track.firstChild);
-        track.appendChild(seq);
-      }
+  function initMarquee() {
+    const marquees = document.querySelectorAll('[data-marquee]');
+    if (!marquees.length) return;
 
-      if (!track.dataset.svMarqueeOriginal) {
-        track.dataset.svMarqueeOriginal = seq.innerHTML;
-      }
+    marquees.forEach(track => {
+      const sequence = track.querySelector('.marquee-sequence');
+      if (!sequence) return;
 
-      const speed = parseFloat(track.getAttribute('data-speed') || '90');
+      // Clone sequence for seamless loop
+      const clone = sequence.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      track.appendChild(clone);
 
-      const rebuild = () => {
-        // Reset back to original
-        seq.innerHTML = track.dataset.svMarqueeOriginal;
-        Array.from(track.children).forEach((ch) => { if (ch !== seq) ch.remove(); });
+      const speed = parseFloat(track.dataset.speed || 90);
+      const duration = (sequence.offsetWidth / speed).toFixed(2);
+      
+      track.style.setProperty('--marquee-duration', `${duration}s`);
+    });
+  }
 
-        // We need a stable width to clone cleanly
-        const shell = track.closest('.sv-marquee-shell') || track.parentElement;
-        const shellW = shell ? shell.getBoundingClientRect().width : window.innerWidth;
+  // =========================================================
+  // Security Badge Animation
+  // =========================================================
 
-        const seqW = Math.ceil(seq.getBoundingClientRect().width);
-        if (!seqW || seqW < 10) return;
+  function initSecurityBadges() {
+    const cards = document.querySelectorAll('.security-card[data-badge]');
+    if (!cards.length || prefersReduceMotion) return;
 
-        // Account for flex gap between sequences
-        const cs = getComputedStyle(track);
-        const gap = parseFloat(cs.columnGap) || parseFloat(cs.gap) || 0;
+    let currentIndex = 0;
 
-        // Clone until we cover enough distance (2x viewport + one sequence safety)
-        let totalW = seqW;
-        while (totalW < (shellW * 2 + seqW)) {
-          const clone = seq.cloneNode(true);
-          clone.setAttribute('aria-hidden', 'true');
-          clone.classList.add('sv-marquee-seq--clone');
-          track.appendChild(clone);
-          totalW += (seqW + gap);
-        }
-
-        const shift = seqW + gap;
-        track.style.setProperty('--sv-marquee-shift', shift + 'px');
-        track.style.setProperty('--sv-marquee-duration', (shift / speed).toFixed(2) + 's');
-
-        // Nudge GPU compositing
-        track.style.transform = 'translate3d(0,0,0)';
-      };
-
-      // Rebuild after images load AND on resize
-      const imgs = Array.from(track.querySelectorAll('img'));
-      let pending = 0;
-
-      imgs.forEach((img) => {
-        if (!img.complete) {
-          pending++;
-          const done = () => { pending--; if (pending === 0) rebuild(); };
-          img.addEventListener('load', done, { once: true });
-          img.addEventListener('error', done, { once: true });
+    function activateBadge(index) {
+      cards.forEach((card, i) => {
+        const badge = card.querySelector('.security-badge');
+        if (badge) {
+          if (i === index) {
+            badge.style.transform = 'translateY(-4px) scale(1.05)';
+            badge.style.opacity = '1';
+          } else {
+            badge.style.transform = 'translateY(0) scale(1)';
+            badge.style.opacity = '0.6';
+          }
         }
       });
+    }
 
-      rebuild();
-      window.addEventListener('resize', debounce(rebuild, 140), { passive: true });
+    // Cycle through badges
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % cards.length;
+      activateBadge(currentIndex);
+    }, 2500);
+
+    // Initial activation
+    activateBadge(0);
+  }
+
+  // =========================================================
+  // Smooth Scroll
+  // =========================================================
+
+  function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href === '#' || !href.startsWith('#')) return;
+        
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          const navHeight = document.querySelector('.nav')?.offsetHeight || 0;
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navHeight - 20;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
     });
   }
 
-  /* ---------------------------------------------------------
-     TRUST BADGE HIGHLIGHT CYCLE
-     --------------------------------------------------------- */
-  function initTrustBadgeCycle() {
-    const trustSection = document.getElementById('trust');
-    if (!trustSection) return;
-    if (prefersReduce) return;
-    if (trustSection.dataset.svTrustCycle === '1') return;
-    trustSection.dataset.svTrustCycle = '1';
+  // =========================================================
+  // Parallax Effect
+  // =========================================================
 
-    const badges = Array.from(trustSection.querySelectorAll('.sv-trust-badge[data-badge]'));
-    if (!badges.length) return;
+  function initParallax() {
+    if (prefersReduceMotion) return;
 
-    let idx = 0;
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
 
-    const activate = (i) => {
-      badges.forEach((b) => b.classList.remove('is-active'));
-      const el = badges[i];
-      if (!el) return;
-      // Restart animation cleanly
-      el.classList.remove('is-active');
-      void el.offsetWidth;
-      el.classList.add('is-active');
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    const updateParallax = () => {
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (mouseY - targetY) * 0.05;
+
+      const visual = hero.querySelector('.hero-visual');
+      if (visual) {
+        const translateX = targetX * 0.02;
+        const translateY = targetY * 0.02;
+        visual.style.transform = `translate(${translateX}px, ${translateY}px)`;
+      }
+
+      requestAnimationFrame(updateParallax);
     };
 
-    activate(0);
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      mouseX = (e.clientX - rect.left - rect.width / 2) / rect.width;
+      mouseY = (e.clientY - rect.top - rect.height / 2) / rect.height;
+    }, { passive: true });
 
-    setInterval(() => {
-      idx = (idx + 1) % badges.length;
-      activate(idx);
-    }, 2200);
+    hero.addEventListener('mouseleave', () => {
+      mouseX = 0;
+      mouseY = 0;
+    });
+
+    updateParallax();
   }
 
-  /* ---------------------------------------------------------
-     HEADER CTA FALLBACK
-     - Ensures Login + Free Trial exist even if the header module hides them.
-     - If you add these in the theme settings, this does nothing.
-     --------------------------------------------------------- */
-  function ensureHeaderCtas() {
-    const header = document.querySelector('.hs-elevate-site-header, header');
-    if (!header) return;
-    if (header.dataset.svCtasInjected === '1') return;
+  // =========================================================
+  // Button Ripple Effect
+  // =========================================================
 
-    const hasLogin = !!header.querySelector('a.hs-elevate-button[href*="/_hcms/mem/login"]');
-    const hasPricing = !!header.querySelector('a.hs-elevate-button[href*="/pricing"]');
-    if (hasLogin && hasPricing) return;
+  function initRippleEffect() {
+    const buttons = document.querySelectorAll('.btn');
+    
+    buttons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
 
-    // Find a reasonable insertion target (right-side container > nav > header)
-    const target =
-      header.querySelector('.hs-elevate-site-header__actions, .hs-elevate-site-header__ctas, .hs-elevate-site-header__right, nav') ||
-      header;
+        ripple.style.cssText = `
+          position: absolute;
+          width: ${size}px;
+          height: ${size}px;
+          left: ${x}px;
+          top: ${y}px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(0);
+          animation: ripple 0.6s ease-out;
+          pointer-events: none;
+        `;
 
-    let wrap = header.querySelector('.sv-header-ctas');
-    if (!wrap) {
-      wrap = document.createElement('div');
-      wrap.className = 'sv-header-ctas';
-      // Try to add near the end of target so it lands “right”
-      target.appendChild(wrap);
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+
+    // Add ripple animation
+    if (!document.querySelector('#ripple-styles')) {
+      const style = document.createElement('style');
+      style.id = 'ripple-styles';
+      style.textContent = `
+        @keyframes ripple {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
     }
-
-    if (!hasLogin) {
-      const a = document.createElement('a');
-      a.href = '/_hcms/mem/login';
-      a.className = 'hs-elevate-button';
-      a.textContent = 'Login';
-      wrap.appendChild(a);
-    }
-
-    if (!hasPricing) {
-      const a = document.createElement('a');
-      a.href = '/pricing';
-      a.className = 'hs-elevate-button';
-      a.textContent = 'Free Trial';
-      wrap.appendChild(a);
-    }
-
-    header.dataset.svCtasInjected = '1';
   }
 
-  /* ---------------------------------------------------------
-     Boot
-     --------------------------------------------------------- */
-  function runAll() {
-    document.querySelectorAll('[data-sv-hero-carousel]').forEach(initSvHeroCarousel);
-    initHeroParallax();
-    initMarquees();
-    initRippleSelectors();
-    initTrustBadgeCycle();
-    ensureHeaderCtas();
+  // =========================================================
+  // Performance Optimizations
+  // =========================================================
+
+  function initPerformanceOptimizations() {
+    // Lazy load images
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+            }
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    }
   }
 
+  // =========================================================
+  // Initialize Everything
+  // =========================================================
+
+  function init() {
+    initNavScroll();
+    initScrollAnimations();
+    initCarousel();
+    initMarquee();
+    initSecurityBadges();
+    initSmoothScroll();
+    initParallax();
+    initRippleEffect();
+    initPerformanceOptimizations();
+  }
+
+  // Run on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runAll, { once: true });
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    runAll();
+    init();
   }
 
-  // HubSpot / React hydration safety net
-  window.addEventListener('load', runAll, { once: true });
-  setTimeout(runAll, 600);
-  setTimeout(runAll, 1800);
+  // Re-initialize on dynamic content (for SPAs)
+  if (window.MutationObserver) {
+    const observer = new MutationObserver(() => {
+      initScrollAnimations();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
 
 })();
