@@ -400,6 +400,191 @@
   }
 
   // =========================================================
+  // Magnetic Button Effect
+  // =========================================================
+
+  function initMagneticButtons() {
+    if (prefersReduceMotion) return;
+    
+    const buttons = document.querySelectorAll('.btn-magnetic, .btn-primary, .btn-free-trial');
+    
+    buttons.forEach(button => {
+      button.addEventListener('mousemove', (e) => {
+        const rect = button.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        
+        const moveX = x * 0.15;
+        const moveY = y * 0.15;
+        
+        button.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+      }, { passive: true });
+      
+      button.addEventListener('mouseleave', () => {
+        button.style.transform = '';
+      });
+    });
+  }
+
+  // =========================================================
+  // Enhanced Parallax Scroll
+  // =========================================================
+
+  function initEnhancedParallax() {
+    if (prefersReduceMotion) return;
+
+    const parallaxElements = document.querySelectorAll('[data-parallax]');
+    if (!parallaxElements.length) return;
+
+    const handleScroll = throttle(() => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      parallaxElements.forEach(element => {
+        const rect = element.getBoundingClientRect();
+        const elementTop = rect.top + scrollY;
+        const elementCenter = elementTop + rect.height / 2;
+        const viewportCenter = scrollY + windowHeight / 2;
+        
+        const distance = viewportCenter - elementCenter;
+        const speed = parseFloat(element.dataset.parallax || '0.5');
+        const translateY = distance * speed;
+        
+        element.style.transform = `translateY(${translateY}px)`;
+      });
+    }, 16);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+  }
+
+  // =========================================================
+  // Text Reveal Animation
+  // =========================================================
+
+  function initTextReveal() {
+    if (prefersReduceMotion) return;
+
+    const textElements = document.querySelectorAll('.hero-title, .section-title');
+    
+    textElements.forEach(element => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animation = 'text-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      observer.observe(element);
+    });
+  }
+
+  // =========================================================
+  // Floating Particles Background
+  // =========================================================
+
+  function initFloatingParticles() {
+    if (prefersReduceMotion) return;
+
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'floating-particles';
+    particlesContainer.style.cssText = `
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    `;
+
+    for (let i = 0; i < 15; i++) {
+      const particle = document.createElement('div');
+      const size = Math.random() * 4 + 2;
+      const duration = Math.random() * 20 + 15;
+      const delay = Math.random() * 5;
+      const x = Math.random() * 100;
+      
+      particle.style.cssText = `
+        position: absolute;
+        width: ${size}px;
+        height: ${size}px;
+        background: radial-gradient(circle, rgba(44, 62, 80, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        left: ${x}%;
+        bottom: -10px;
+        animation: float-up ${duration}s ease-in-out infinite;
+        animation-delay: ${delay}s;
+        opacity: ${Math.random() * 0.5 + 0.3};
+      `;
+      
+      particlesContainer.appendChild(particle);
+    }
+
+    // Add float-up animation
+    if (!document.querySelector('#particle-styles')) {
+      const style = document.createElement('style');
+      style.id = 'particle-styles';
+      style.textContent = `
+        @keyframes float-up {
+          0% {
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-100vh) translateX(${Math.random() * 200 - 100}px) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    hero.appendChild(particlesContainer);
+  }
+
+  // =========================================================
+  // 3D Tilt Effect on Cards
+  // =========================================================
+
+  function init3DTilt() {
+    if (prefersReduceMotion) return;
+
+    const cards = document.querySelectorAll('.security-card, .feature-item');
+    
+    cards.forEach(card => {
+      card.classList.add('tilt-3d');
+      
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+      }, { passive: true });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // =========================================================
   // Performance Optimizations
   // =========================================================
 
@@ -437,7 +622,12 @@
     initSecurityBadges();
     initSmoothScroll();
     initParallax();
+    initEnhancedParallax();
     initRippleEffect();
+    initMagneticButtons();
+    initTextReveal();
+    initFloatingParticles();
+    init3DTilt();
     initPerformanceOptimizations();
   }
 
