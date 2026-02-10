@@ -55,7 +55,7 @@
           const delay = parseInt(element.dataset.delay || 0, 10);
           
           setTimeout(() => {
-            element.classList.add('animated');
+            element.classList.add('animate');
           }, delay);
           
           observer.unobserve(element);
