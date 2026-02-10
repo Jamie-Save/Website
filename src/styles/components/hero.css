@@ -1,0 +1,105 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 64px;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f7 50%, #e8f0f5 100%);
+  z-index: -1;
+}
+
+.hero-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(44, 62, 80, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(52, 73, 94, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(26, 37, 47, 0.08) 0%, transparent 60%);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
+  animation: swirl 20s ease-in-out infinite;
+  z-index: -1;
+}
+
+.hero-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(135deg, rgba(44, 62, 80, 0.05) 0%, transparent 40%),
+    linear-gradient(225deg, rgba(52, 73, 94, 0.05) 0%, transparent 40%);
+  z-index: -1;
+}
+
+.hero-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-3xl) var(--space-lg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-gray-900);
+  background: linear-gradient(135deg, var(--color-gray-900) 0%, var(--color-gray-700) 50%, var(--color-gray-900) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 8s ease infinite;
+  background-size: 200% 200%;
+  position: relative;
+}
+
+.hero-subtitle {
+  font-size: var(--font-size-xl);
+  line-height: 1.6;
+  color: var(--color-gray-600);
+  max-width: 600px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.hero-fineprint {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.hero-visual {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-visual:hover {
+  transform: perspective(1000px) rotateY(-2deg) rotateX(2deg) scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    padding: var(--space-2xl) var(--space-md);
+  }
+}
