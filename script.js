@@ -585,6 +585,117 @@
   }
 
   // =========================================================
+  // Custom Cursor for Clickable Elements
+  // =========================================================
+
+  function initCustomCursor() {
+    if (prefersReduceMotion || window.innerWidth < 768) return;
+
+    // Create cursor elements
+    const cursor = document.createElement('div');
+    cursor.className = 'custom-cursor';
+    cursor.innerHTML = '<div class="cursor-dot"></div><div class="cursor-ring"></div>';
+    
+    const cursorDot = cursor.querySelector('.cursor-dot');
+    const cursorRing = cursor.querySelector('.cursor-ring');
+    
+    document.body.appendChild(cursor);
+    document.body.style.cursor = 'none'; // Hide default cursor
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let isHovering = false;
+
+    // Smooth cursor following with lerp
+    const updateCursor = () => {
+      cursorX += (mouseX - cursorX) * 0.15;
+      cursorY += (mouseY - cursorY) * 0.15;
+      
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+      
+      requestAnimationFrame(updateCursor);
+    };
+
+    // Track mouse position
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      if (!cursor.classList.contains('visible')) {
+        cursor.classList.add('visible');
+      }
+    }, { passive: true });
+
+    // Hide cursor when leaving window
+    document.addEventListener('mouseleave', () => {
+      cursor.classList.remove('visible');
+    });
+
+    // Detect clickable elements
+    const clickableSelectors = 'a, button, .btn, [role="button"], input[type="submit"], input[type="button"], .carousel, .carousel-dot, [data-carousel]';
+    const clickableElements = document.querySelectorAll(clickableSelectors);
+
+    clickableElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        isHovering = true;
+        cursor.classList.add('hover');
+        cursorDot.classList.add('expand');
+        cursorRing.classList.add('expand');
+      }, { passive: true });
+
+      element.addEventListener('mouseleave', () => {
+        isHovering = false;
+        cursor.classList.remove('hover');
+        cursorDot.classList.remove('expand');
+        cursorRing.classList.remove('expand');
+      }, { passive: true });
+
+      element.addEventListener('mousedown', () => {
+        cursor.classList.add('click');
+      }, { passive: true });
+
+      element.addEventListener('mouseup', () => {
+        cursor.classList.remove('click');
+      }, { passive: true });
+    });
+
+    // Also handle dynamically added elements
+    const observer = new MutationObserver(() => {
+      const newClickables = document.querySelectorAll(clickableSelectors);
+      newClickables.forEach(element => {
+        if (!element.dataset.cursorAttached) {
+          element.dataset.cursorAttached = 'true';
+          
+          element.addEventListener('mouseenter', () => {
+            isHovering = true;
+            cursor.classList.add('hover');
+            cursorDot.classList.add('expand');
+            cursorRing.classList.add('expand');
+          }, { passive: true });
+
+          element.addEventListener('mouseleave', () => {
+            isHovering = false;
+            cursor.classList.remove('hover');
+            cursorDot.classList.remove('expand');
+            cursorRing.classList.remove('expand');
+          }, { passive: true });
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    // Start cursor animation
+    updateCursor();
+  }
+
+  // =========================================================
   // Performance Optimizations
   // =========================================================
 
@@ -628,6 +739,7 @@
     initTextReveal();
     initFloatingParticles();
     init3DTilt();
+    initCustomCursor();
     initPerformanceOptimizations();
   }
 
